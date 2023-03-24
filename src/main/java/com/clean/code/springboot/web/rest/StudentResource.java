@@ -45,4 +45,9 @@ public class StudentResource {
         student1.setLastName(newStudent.getLastName());
         return ResponseEntity.ok(student1);
     }
+    
+    @DeleteMapping("students/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
+        return ResponseEntity.ok("Students was deleted.");
+    }
 }
