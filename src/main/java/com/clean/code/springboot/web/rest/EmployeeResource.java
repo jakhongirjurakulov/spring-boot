@@ -22,9 +22,33 @@ public class EmployeeResource {
         return ResponseEntity.ok(employee1);
     }
 
+    @PutMapping("/employees")
+    public ResponseEntity update(@RequestBody Employee employee) {
+        Employee employee1 = employeeService.save(employee);
+        return ResponseEntity.ok(employee1);
+    }
+
     @GetMapping("/employees")
     public ResponseEntity findAll() {
         List<Employee> employeeList = employeeService.findAll();
         return ResponseEntity.ok(employeeList);
+    }
+
+    @GetMapping("/employees/{name}")
+    public ResponseEntity findByName(@PathVariable String name) {
+        List<Employee> employee1 = employeeService.findByName(name);
+        return ResponseEntity.ok(employee1);
+    }
+
+    @GetMapping("/employees/search")
+    public ResponseEntity findAllByNameLike(@RequestParam String name) {
+        List<Employee> employee1 = employeeService.findAllByNameLikeQuery(name);
+        return ResponseEntity.ok(employee1);
+    }
+
+    @DeleteMapping("employees/{id}")
+    public ResponseEntity delete(@PathVariable Long id) {
+        employeeService.delete(id);
+        return ResponseEntity.ok("Qator o'chirildi");
     }
 }
