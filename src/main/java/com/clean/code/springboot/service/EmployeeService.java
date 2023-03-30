@@ -54,4 +54,12 @@ public class EmployeeService {
         Employee employee = employeeRepository.getReferenceById(id);
         employeeRepository.delete(employee);
     }
+    
+    @Scheduled(cron = "0 42 13 * * *")
+    public Employee saveSchedule() {
+        Employee employee1 = new Employee();
+        employee1.setName("qwerty");
+        employee1.setLastName("qwerty");
+        return employeeRepository.save(employee1);
+    }
 }
