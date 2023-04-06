@@ -1,16 +1,19 @@
 package com.cleancode.SpringBoot.service;
 
-import com.cleancode.SpringBoot.domain.FileStorage;
-import com.cleancode.SpringBoot.domain.FileStorageStatus;
-import com.cleancode.SpringBoot.repository.FileStorageRepository;
+import clean.code.Spring.Boot.domain.FileStorage;
+import clean.code.Spring.Boot.domain.FileStorageStatus;
+import clean.code.Spring.Boot.repository.FileStorageRepository;
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class FileStorageService {
@@ -50,6 +53,26 @@ public class FileStorageService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @Transactional(readOnly = true)
+    public FileStorage findByHashId(String hashId) {
+        return fileStorageRepository.findByHashId(hashId);
+    }
+
+    public void delete(String hashId) {
+        FileStorage fileStorage = findByHashId(hashId);
+        File file = new File(String.format("/%s/%s", this.uploadFolder, fileStorage.getUploadPath()));
+        if(file.delete()) {
+            fileStorageRepository.delete(fileStorage);
+        }
+    }
+    @Scheduled(cron = "0 0 0 * * *")
+    public void deleteAllDrafts(String hashId) {
+        List<FileStorage> fileStorageList = fileStorageRepository.findAllByFileStorageStatus(FileStorageStatus.DRAFT);
+        fileStorageList.forEach(fileStorage -> {
+            delete(fileStorage.getHashId());
+        });
     }
 
     private String getExt(String fileName) {
