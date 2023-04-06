@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FileStorageRepository extends JpaRepository<FileStorage, Long> {
-
+  FileStorage findByHashId(String hashId);
+  List<FileStorage> findAllByFileStorageStatus(FileStorageStatus status);
 }
